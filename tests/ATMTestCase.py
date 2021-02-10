@@ -2,7 +2,7 @@ import unittest
 from atm import ATM
 
 
-class AtmTestCase(unittest.TestCase):
+class ATMTestCase(unittest.TestCase):
     def test_atm_get(self):
         atm = ATM()
         atm.put(100, 8)
@@ -17,7 +17,3 @@ class AtmTestCase(unittest.TestCase):
         self.assertEqual(atm.balance, 800)
 
         self.assertIsNone(atm.get(1500))
-
-
-if __name__ == '__main__':
-    unittest.main()
