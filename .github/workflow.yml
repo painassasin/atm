@@ -1,0 +1,33 @@
+name: CodeCov
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest-cov isort
+    - name: Lint with flake8 and isort
+      run: |
+        flake8 . --max-line-length=120 --count --show-source --statistics
+        isort . --check-only
+    - name: Test app and enerate Report
+      run: |
+        coverage run -m pytest  --cov-report=term-missing pytests/ -v
+        coverage report
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v1
