@@ -1,5 +1,7 @@
 import logging
 
+from exceptions import NotEnoughMoney
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -42,4 +44,5 @@ class ATM:
             self.balance -= sum([k * v for k, v in result_bills.items()])
             return result_bills
 
-        logger.warning('Not enough money in ATM')
+        logger.error('Not enough money in ATM')
+        raise NotEnoughMoney
