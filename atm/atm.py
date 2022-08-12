@@ -1,6 +1,6 @@
 import logging
 
-from exceptions import NotEnoughMoney, UnsupportedBill
+from atm.exceptions import NotEnoughMoney, UnsupportedBill
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

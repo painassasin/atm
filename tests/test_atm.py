@@ -1,6 +1,6 @@
 import pytest
 
-from exceptions import NotEnoughMoney, UnsupportedBill
+from atm.exceptions import NotEnoughMoney, UnsupportedBill
 
 
 def test_get_money_success(new_atm):
