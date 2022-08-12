@@ -1,8 +1,8 @@
-from pytest import fixture
+import pytest
 
 from atm import ATM
 
 
-@fixture
+@pytest.fixture
 def new_atm() -> ATM:
     return ATM()

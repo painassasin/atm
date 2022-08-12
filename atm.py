@@ -1,47 +1,51 @@
 import logging
 
-from exceptions import NotEnoughMoney
+from exceptions import NotEnoughMoney, UnsupportedBill
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class ATM:
+    supported_bills = (10, 50, 100, 200, 500, 1000, 2000, 5000)
 
     def __init__(self):
-        self.balance: int = 0
-        self.bills: dict = dict.fromkeys((10, 50, 100, 200, 500, 1000, 2000, 5000), 0)
+        self._balance: int = 0
+        self._bills: dict[int, int] = dict.fromkeys(self.supported_bills, 0)
 
-    def put(self, bill, count):
+    @property
+    def balance(self) -> int:
+        return self._balance
+
+    def put(self, bill: int, count: int) -> None:
         """
         Кладет купюры `bill` в банкомат, в количестве `count`.
-        :param bill:
-        :param count:
-        :return:
         """
-        if bill in self.bills:
-            self.bills[bill] += count
-            self.balance += bill * count
+        if bill not in self._bills:
+            logger.error(f'Unsupported bill {bill}')
+            raise UnsupportedBill
 
-    def get(self, amount) -> dict:
+        self._bills[bill] += count
+        self._balance += bill * count
+        logger.info(f'Banknotes credited: bill={bill}, count={count}, balance={self._balance}')
+
+    def get(self, amount: int) -> dict:
         """
         Выдает сумму `amount` из банкомата. В случае отсутствия нужной суммы
-        вернет `None` и соответствующее сообщение.
-        :param amount:
-        :return:
+        выкинет исключение `NotEnoughMoney` и соответствующее сообщение.
         """
         result_bills = dict()
-        for value in reversed(self.bills.keys()):
-            count = amount // value
-            num = count if count <= self.bills[value] else self.bills[value]
+        for value in reversed(self._bills.keys()):
+            count: int = amount // value
+            num: int = count if count <= self._bills[value] else self._bills[value]
             amount -= num * value
             if num:
                 result_bills[value] = num
 
         if not amount:
             for k, v in result_bills.items():
-                self.bills[k] -= v
-            self.balance -= sum([k * v for k, v in result_bills.items()])
+                self._bills[k] -= v
+            self._balance -= sum([k * v for k, v in result_bills.items()])
             return result_bills
 
         logger.error('Not enough money in ATM')
